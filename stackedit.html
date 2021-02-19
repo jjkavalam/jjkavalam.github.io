@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
+
+    <!-- The loading of KaTeX is deferred to speed up page rendering -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" integrity="sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4" crossorigin="anonymous"></script>
+
+    <script src="https://unpkg.com/stackedit-js@1.0.7/docs/lib/stackedit.min.js"></script>
+</head>
+<div id="problem"></div>
+<script>
+
+    const url = window.location.hash.substring(1);
+    console.log(url);
+    if (url) {
+        fetch(url).then(res => res.text()).then(text => render(text));
+    }
+    else {
+        document.write("Noting to load");
+    }
+
+    function render(md) {
+        console.log(md);
+        var divEl = document.getElementById("problem");
+        var stackedit = new Stackedit();
+        stackedit.openFile({
+            name: 'Filename',
+            content: { text: md }
+        }, true /* silent mode */);
+
+        // In silent mode, the `fileChange` event is emitted only once.
+        stackedit.on('fileChange', (file) => {
+            divEl.innerHTML = file.content.html;
+            [...document.getElementsByClassName("katex--inline"),...document.getElementsByClassName("katex--display")].forEach(kelm => {
+                katex.render(kelm.innerText, kelm, {
+                    throwOnError: true
+                });
+                if (kelm.classList.contains("katex--display")) {
+                    kelm.innerHTML = "<p>" + kelm.innerHTML + "</p>";
+                }
+                console.log(kelm);
+            })
+        });
+
+    }
+
+</script>
+</html>
+
