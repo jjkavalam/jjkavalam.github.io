@@ -15,7 +15,13 @@
     const url = window.location.hash.substring(1);
     console.log(url);
     if (url) {
-        fetch(url).then(res => res.text()).then(text => render(text));
+        if (url.startsWith("http") || url.startsWith("/")) {
+            fetch(url).then(res => res.text()).then(text => render(text));
+        }
+        else {
+            console.log("rendering as text", url);
+            render(decodeURIComponent(url));
+        }
     }
     else {
         document.write("Noting to load");
